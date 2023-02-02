@@ -16,4 +16,4 @@ class HeadlessWebDriver:
         self.driver.get(url)
         html = self.driver.page_source
         self.driver.quit()
-        print(html)
+        return html
