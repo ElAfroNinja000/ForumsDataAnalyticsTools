@@ -13,7 +13,7 @@ class HeadlessWebDriver:
             self.options.add_argument(option)
         self.driver = webdriver.Chrome(options=self.options, executable_path=r"D:\Python\Lib\site-packages\chromedriver_win32\chromedriver.exe")
 
-    def get_raw_data_from_page(self, url):
+    def get_raw_data_from_page(self, url: str):
         try:
             self.driver.get(url)
             html = self.driver.page_source
