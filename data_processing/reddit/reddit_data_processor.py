@@ -33,17 +33,15 @@ class RedditDataProcessor:
             post = self.make_post_data(post_parser)
             comments = []
             for comment in post["post_comments"]:
-                comment_data = RedditCommentParser(comment[0]).get_data()
                 replies = []
                 for reply in comment[1]:
-                    reply_data = RedditCommentParser(reply).get_data()
-                    replies.append(reply_data)
+                    replies.append(reply.get_data())
                 comment = {
-                    "comment_data": comment_data,
+                    "comment_data": comment[0].get_data(),
                     "replies":      replies
                 }
                 comments.append(comment)
-            post["comments"] = comments
+            post["post_comments"] = comments
             posts.append(post)
             if i >= limit != 0:
                 break
@@ -52,6 +50,7 @@ class RedditDataProcessor:
 
 if __name__ == "__main__":
     reddit_data_processor = RedditDataProcessor(BASE_URL, "fried chicken")
+    reddit_data = reddit_data_processor.run(NUMBER_OF_POSTS)
 
     with open(f"{os.getcwd()}/data/test.json", "w") as file:
-        file.write(json.dumps(reddit_data_processor.run(NUMBER_OF_POSTS)))
+        file.write(json.dumps(reddit_data, indent=4))

@@ -1,6 +1,7 @@
 import re
 
 from parsing.page_parser import PageParser
+from parsing.reddit.reddit_comment_parser import RedditCommentParser
 
 
 class RedditPostParser(PageParser):
@@ -25,13 +26,13 @@ class RedditPostParser(PageParser):
     def get_comments(self):
         comment_section = self.content.find('div', attrs={'data-scroller-first': True}).find_previous() \
                                       .find_all("div", attrs={'id': True, "style": True, "tabindex": True})
-        return [comment for comment in comment_section
-             if comment.find(class_=re.compile(r"^Comment .*?$"))]
+        comments = [RedditCommentParser(comment) for comment in comment_section
+                    if comment.find(class_=re.compile(r"^Comment .*?$"))]
+        return [comment for comment in comments if comment.is_available()]
 
     def get_comments_and_replies(self):
         comments = self.get_comments()
-        comments_depths = [int(comment.select_one('[data-testid="post-comment-header"]').find_previous().text.split(" ")[-1])
-                           for comment in comments]
+        comments_depths = [comment.get_data()["depth"] for comment in comments]
 
         replies_per_comment = []
         for i, comment_depth in enumerate(comments_depths):
