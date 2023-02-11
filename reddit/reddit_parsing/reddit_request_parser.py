@@ -1,4 +1,4 @@
-from parsing.page_parser import PageParser
+from base.parsing.page_parser import PageParser
 
 
 class RedditRequestParser(PageParser):
