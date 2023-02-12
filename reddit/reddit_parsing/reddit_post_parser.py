@@ -11,7 +11,7 @@ class RedditPostParser(PageParser):
 
     def get_post_data(self):
         return {
-            "score":           self.content.select_one('[aria-label="Downvote"]').find_previous().text.replace("•", "0"),
+            "score":           self.__compute_score__(self.content.select_one('[aria-label="Downvote"]').find_previous().text.replace("•", "0")),
             "title":           self.content.select_one('[data-adclicklocation="title"]').select_one("h1").text,
             "timestamp":       self.content.select_one('[data-testid="post_timestamp"]').text,
             "comments_count":  self.content.select_one('[data-click-id="comments"]').select_one("span").text.split(" ")[0]
@@ -53,3 +53,11 @@ class RedditPostParser(PageParser):
             "post_data":      post_data,
             "community_data": community_data
         }
+
+    @staticmethod
+    def __compute_score__(score: str):
+        if "k" in score:
+            score = score.replace("k", "00")
+        elif "m" in score:
+            score = score.replace("m", "00000")
+        return int(score.replace(".", ""))

@@ -5,7 +5,7 @@ class RedditCommentParser:
             self.depth     = int(comment.select_one('[data-testid="post-comment-header"]').find_previous().text.split(" ")[-1])
             self.timestamp = comment.select_one('[data-testid="comment_timestamp"]').text.replace("il y a ", "")
             self.text      = comment.select_one('[data-testid="comment"]').select_one("p").text
-            self.score     = int(comment.select_one('[aria-label="Downvote"]').find_previous().text.replace("•", "0"))
+            self.score     = self.__compute_score__(comment.select_one('[aria-label="Downvote"]').find_previous().text.replace("•", "0"))
         else:
             self.depth     = 1
             self.timestamp = ""
@@ -25,3 +25,10 @@ class RedditCommentParser:
             "score":     self.score
         }
 
+    @staticmethod
+    def __compute_score__(score: str):
+        if "k" in score:
+            score = score.replace("k", "00")
+        elif "m" in score:
+            score = score.replace("m", "00000")
+        return int(score.replace(".", ""))
